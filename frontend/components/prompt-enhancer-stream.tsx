@@ -135,25 +135,26 @@ export function PromptEnhancerStream() {
 
   return (
     <div className="flex flex-col h-screen w-full bg-gray-100">
+      <div className="w-full text-center mb-8">
+        <h1 className="text-3xl font-bold mb-2 flex items-center justify-center">
+          <WandIcon className="mr-2" /> Prompt Crafter
+        </h1>
+        <p className="text-gray-600">What are you generating today?</p>
+      </div>
       <div className="flex flex-1 w-full">
         {/* Left Panel */}
-        <div className="w-1/2 p-4 bg-white shadow-md">
-          <h1 className="text-2xl font-bold mb-2 flex items-center">
-            <WandIcon className="mr-2" /> Prompt Crafter
-          </h1>
-          <p className="mb-4 text-gray-600">What are you generating today?</p>
-          <div className="relative">
-            <ScrollArea className="h-40 w-full rounded-md border">
-              <textarea
-                value={userPrompt}
-                onChange={(e) => setUserPrompt(e.target.value)}
-                placeholder="Enter your prompt here..."
-                className={`w-full h-full p-2 resize-none focus:outline-none ${
-                  userPrompt ? "border-blue-500" : ""
-                }`}
-              />
-            </ScrollArea>
-            <div className="absolute bottom-2 right-2 flex space-x-2">
+        <div className="w-1/2 p-4 bg-white shadow-md flex flex-col">
+          <Card className="flex flex-col" style={{ height: '250px' }}>
+
+            <CardContent className="flex-grow">
+            <textarea
+                  value={userPrompt}
+                  onChange={(e) => setUserPrompt(e.target.value)}
+                  placeholder="Enter your prompt here..."
+                  className="w-full h-full p-2 resize-none focus:outline-none"
+                />
+            </CardContent>
+            <CardFooter className="justify-end space-x-2">
               <Button size="icon" onClick={handleStreamSubmit} disabled={isLoading}>
                 {isLoading ? <RefreshCwIcon className="h-4 w-4 animate-spin" /> : <WandIcon className="h-4 w-4 text-purple-500" />}
               </Button>
@@ -167,19 +168,22 @@ export function PromptEnhancerStream() {
               }}>
                 <RefreshCwIcon className="h-4 w-4" />
               </Button>
-            </div>
-          </div>
+            </CardFooter>
+          </Card>
         </div>
 
         {/* Right Panel (Enhanced Prompt) */}
-        <div className="w-1/2 p-4 bg-gray-50">
-         
-          <Card className="mb-4 w-full">
-            <CardContent className="pt-6">
-              <ScrollArea className="h-48">
-                <p className="text-gray-600 text-base font-italic">
-                  {enhancedPrompt || "I will help enhance your prompt. You can submit the enhanced prompt and get the result."}
-                </p>
+        <div className="w-1/2 p-4 bg-gray-50 flex flex-col">
+          <Card className="flex flex-col" style={{ height: '250px' }}>
+            <CardContent className="pt-6 flex-grow overflow-hidden">
+              <ScrollArea className="h-full">
+                {enhancedPrompt ? (
+                  <p className="text-gray-600 text-base font-italic">
+                    {enhancedPrompt}
+                  </p>
+                ) : (
+                  <p className="text-gray-400" style={{ color: '#9CA3AF' }}>I will help enhance your prompt. You can submit the enhanced prompt and get the result.</p>
+                )}
               </ScrollArea>
             </CardContent>
             <CardFooter className="justify-end space-x-2">
@@ -194,10 +198,9 @@ export function PromptEnhancerStream() {
 
           {/* Assistant Response */}
           {showAssistantResponse && (
-            <Card className="mt-4 w-full">
-              <CardContent>
-              
-                <ScrollArea className="h-24">
+            <Card className="mt-4 flex flex-col" style={{ height: '300px' }}>
+              <CardContent className="flex-grow overflow-hidden">
+                <ScrollArea className="h-full">
                   <p>{assistantResponse}</p>
                 </ScrollArea>
               </CardContent>
