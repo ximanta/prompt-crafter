@@ -1,0 +1,57 @@
+Create a Python REST API using FAST API. The application should have a /enhance_prompt POST endpoint
+
+Create  the proper project structure with requirements.txt, README.md, .gitignore, license and others.
+
+Use Lang Chain and make call to gemini-pro using ChatGoogleGenerativeAI and API Key AIzaSyCYutjs2BzQThKnA2q1hDNbZro4Al7N0Dw
+
+Analyze the response to extract the below expected JSON structure by REST clients:
+
+prompts:[
+{
+prompt: This is the original prompt
+enhanced_prompt: This is the prompt the  enhanced
+},
+....
+]
+
+Print out the response and return back the JSON. 
+
+
+Use the below prompt to prompt Gemini.
+
+
+"Act as 3 Prompt Engineers who are expert in enhancing prompt to get the best out of a large language model I will give a sample prompt and each of the prompt engineer needs to:
+
+1. Critically analyze the prompt and list down your feedbacks, focus on the aspects of writing a good prompt that are missing.
+2. List down the prompt engineering techniques that can be applied to enhance the prompt. Outline the approach and though process.
+3. Apply the techniques and enhance the prompt.
+
+Share each step with the group and critique each other's responses.
+Rate the responses on a scale from 1 to 5, with 1 indicating a highly unlikely approach and 5 indicating a highly likely approach.
+If any expert's idea is judged to be fundamentally flawed or is deemed invalid at any step, remove them from the discussion.
+
+
+Respond in the beow JSON format.
+
+prompts:[
+{
+prompt: This is the original prompt
+enhanced_prompt: This is the prompt the  enhanced
+},
+{
+prompt: This is the original prompt
+enhanced_prompt: This is the prompt the  enhanced
+},
+{
+prompt: This is the original prompt
+enhanced_prompt: This is the prompt the  enhanced
+}
+]
+
+Do not include any observations and analysis in your response. ONLY PROVIDE THE JSON.
+
+###
+The prompt is {user_prompt}"
+
+
+
