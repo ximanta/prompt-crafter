@@ -202,12 +202,13 @@ export function PromptEnhancerStream() {
     }
   }
 
-   const handleSubmitEnhancedPrompt = async () => {
+  const handleSubmitEnhancedPrompt = async () => {
     setAssistantResponse(''); 
-    setIsAssistantStreaming(true)
-    assistantAbortControllerRef.current = new AbortController()
+    setIsAssistantStreaming(true);
+    assistantAbortControllerRef.current = new AbortController();
+    
     try {
-      setShowAssistantResponse(true); // Show the response area
+      setShowAssistantResponse(true);
       setAssistantResponse(''); // Clear previous response
   
       const response = await fetch("http://localhost:8000/answer", {
@@ -216,7 +217,7 @@ export function PromptEnhancerStream() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt: enhancedPrompt }),
-        signal: assistantAbortControllerRef.current.signal,
+        signal: assistantAbortControllerRef.current.signal, // Attach abort signal
       });
   
       if (!response.body) {
@@ -227,20 +228,31 @@ export function PromptEnhancerStream() {
       const decoder = new TextDecoder();
       let done = false;
   
-      // Stream the response character by character
       while (!done) {
         const { value, done: streamDone } = await reader.read();
         done = streamDone;
   
-        // Decode the incoming chunk
+        // If the fetch is aborted, break the loop immediately
+        if (assistantAbortControllerRef.current.signal.aborted) {
+          console.log("Assistant streaming aborted");
+          break;
+        }
+  
         const chunkValue = decoder.decode(value);
+  
         for (const char of chunkValue) {
+          // If the fetch is aborted, stop appending to assistantResponse
+          if (assistantAbortControllerRef.current.signal.aborted) {
+            console.log("Assistant streaming aborted in inner loop");
+            break;
+          }
+  
           // Append each character one by one to give a streaming effect
           setAssistantResponse((prev) => prev + char);
           await new Promise((resolve) => setTimeout(resolve, 1)); // Optional delay for better user experience
         }
       }
-
+  
       setAssistantResponse((prev) => prev.replace(/\[DONE\]$/, '').trim());
     } catch (error) {
       if (error.name !== 'AbortError') {
@@ -248,10 +260,9 @@ export function PromptEnhancerStream() {
         setAssistantResponse('Error: Unable to get response from assistant.');
       }
     } finally {
-      setIsAssistantStreaming(false)
+      setIsAssistantStreaming(false);
     }
   };
-
   const handleStopAssistantStreaming = () => {
     if (assistantAbortControllerRef.current) {
       assistantAbortControllerRef.current.abort()
