@@ -9,6 +9,9 @@ from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.responses import StreamingResponse
 import asyncio
 import logging
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -115,9 +118,7 @@ async def websocket_endpoint(websocket: WebSocket):
         except WebSocketDisconnect:
             print("Client disconnected")
             break
-        # Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
 
 async def answer(user_prompt: str):
     try:

@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* Override the prose width constraints */
+.prose {
+  max-width: 100%; /* Make it take full width */
+}
+
+.markdown-content {
+  width: 100%;
+  overflow-wrap: break-word; /* Handle long words and URLs */
+}
 /* Define the ai-generated-font style */
 .ai-generated-font {
   font-family: 'Roboto', 'Open Sans', 'Lato', sans-serif; /* Choose from these fonts */

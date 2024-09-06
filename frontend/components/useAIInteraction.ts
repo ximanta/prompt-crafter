@@ -39,8 +39,6 @@ export function useAIInteraction() {
         if (done) break
 
         const decodedChunk = decoder.decode(value, { stream: true })
-        console.log("Decoded chunk:", decodedChunk)
-
         buffer += decodedChunk
 
         const sanitizedBuffer = buffer
@@ -65,7 +63,6 @@ export function useAIInteraction() {
                 buffer = buffer.slice(jsonEnd + 1)
               }
             } catch (error) {
-              console.log("Error parsing first chunk:", error)
             }
           }
         } else {
@@ -119,7 +116,6 @@ export function useAIInteraction() {
         if (done) break
 
         if (assistantAbortControllerRef.current.signal.aborted) {
-          console.log("Assistant streaming aborted")
           break
         }
 
@@ -127,7 +123,6 @@ export function useAIInteraction() {
 
         for (const char of chunkValue) {
           if (assistantAbortControllerRef.current.signal.aborted) {
-            console.log("Assistant streaming aborted in inner loop")
             break
           }
 

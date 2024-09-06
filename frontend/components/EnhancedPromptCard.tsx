@@ -51,7 +51,7 @@ export function EnhancedPromptCard({
                 {enhancedPrompt}
               </ReactMarkdown>
             ) : (
-              <p className="text-gray-400">I will help enhance your prompt. You can submit the enhanced prompt and get the result.</p>
+              <p className="text-gray-400">Get ready to generate something exciting today!!</p>
             )}
           </ScrollArea>
         </CardContent>
