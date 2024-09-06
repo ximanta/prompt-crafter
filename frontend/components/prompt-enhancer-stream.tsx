@@ -6,6 +6,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ArrowUpIcon, CopyIcon, RefreshCwIcon, SendIcon, WandIcon } from "lucide-react"
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 export function PromptEnhancerStream() {
   const [userPrompt, setUserPrompt] = useState("")
@@ -244,10 +246,17 @@ export function PromptEnhancerStream() {
           <Card className="flex flex-col" style={{ height: '250px' }}>
             <CardContent className="pt-6 flex-grow overflow-hidden">
               <ScrollArea className="h-full">
+                
                 {enhancedPrompt ? (
-                  <p className="text-gray-600 text-base font-italic">
+                  // <p className="text-gray-600 text-base font-italic">
+                  <ReactMarkdown 
+                  className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
+                  remarkPlugins={[remarkGfm]}
+                  // rehypePlugins={[rehypeRaw]}
+                >
                     {enhancedPrompt}
-                  </p>
+                    </ReactMarkdown>
+                  // </p>
                 ) : (
                   <p className="text-gray-400" style={{ color: '#9CA3AF' }}>I will help enhance your prompt. You can submit the enhanced prompt and get the result.</p>
                 )}
@@ -275,7 +284,11 @@ export function PromptEnhancerStream() {
           <Card className="w-3/4 flex flex-col" style={{ minHeight: '300px' }}>
             <CardContent className="flex-grow overflow-hidden">
               <ScrollArea className="h-full">
-                <ReactMarkdown className="prose max-w-none">
+                <ReactMarkdown 
+                  className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
+                  remarkPlugins={[remarkGfm]}
+                  // rehypePlugins={[rehypeRaw]}
+                >
                   {assistantResponse}
                 </ReactMarkdown>
               </ScrollArea>
