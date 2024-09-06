@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ArrowUpIcon, CopyIcon, RefreshCwIcon, SendIcon, WandIcon } from "lucide-react"
+import ReactMarkdown from 'react-markdown';
 
 export function PromptEnhancerStream() {
   const [userPrompt, setUserPrompt] = useState("")
@@ -208,18 +209,17 @@ export function PromptEnhancerStream() {
         </h1>
         <p className="text-gray-600">What are you generating today?</p>
       </div>
-      <div className="flex flex-1 w-full">
-        {/* Left Panel */}
-        <div className="w-1/2 p-4 bg-white shadow-md flex flex-col">
+      <div className="flex w-full mb-4">
+        {/* Left Panel (User Prompt) */}
+        <div className="w-1/2 p-4 bg-white shadow-md">
           <Card className="flex flex-col" style={{ height: '250px' }}>
-
             <CardContent className="flex-grow">
-            <textarea
-                  value={userPrompt}
-                  onChange={(e) => setUserPrompt(e.target.value)}
-                  placeholder="Enter your prompt here..."
-                  className="w-full h-full p-2 resize-none focus:outline-none"
-                />
+              <textarea
+                value={userPrompt}
+                onChange={(e) => setUserPrompt(e.target.value)}
+                placeholder="Enter your prompt here..."
+                className="w-full h-full p-2 resize-none focus:outline-none"
+              />
             </CardContent>
             <CardFooter className="justify-end space-x-2">
               <Button size="icon" onClick={handleStreamSubmit} disabled={isLoading}>
@@ -240,7 +240,7 @@ export function PromptEnhancerStream() {
         </div>
 
         {/* Right Panel (Enhanced Prompt) */}
-        <div className="w-1/2 p-4 bg-gray-50 flex flex-col">
+        <div className="w-1/2 p-4 bg-gray-50">
           <Card className="flex flex-col" style={{ height: '250px' }}>
             <CardContent className="pt-6 flex-grow overflow-hidden">
               <ScrollArea className="h-full">
@@ -266,19 +266,23 @@ export function PromptEnhancerStream() {
               </Button>
             </CardFooter>
           </Card>
-
-          {/* Assistant Response */}
-          {showAssistantResponse && (
-            <Card className="mt-4 flex flex-col" style={{ height: '300px' }}>
-              <CardContent className="flex-grow overflow-hidden">
-                <ScrollArea className="h-full">
-                  <p>{assistantResponse}</p>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
+
+      {/* Assistant Response (Below, Centered) */}
+      {showAssistantResponse && (
+        <div className="w-full px-4 flex justify-center">
+          <Card className="w-3/4 flex flex-col" style={{ minHeight: '300px' }}>
+            <CardContent className="flex-grow overflow-hidden">
+              <ScrollArea className="h-full">
+                <ReactMarkdown className="prose max-w-none">
+                  {assistantResponse}
+                </ReactMarkdown>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }
