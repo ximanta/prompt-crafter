@@ -10,9 +10,50 @@ import remarkGfm from 'remark-gfm';
 import { FaStop } from "react-icons/fa6";
 import Tooltip, { TooltipProps } from '@mui/material/Tooltip';
 
+import { ArrowDownIcon } from 'lucide-react'; // Assuming you're using Lucide icons
+
 const TopTooltip = (props: TooltipProps) => (
   <Tooltip {...props} placement="top" />
 );
+
+const ScrollToBottomButton = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.pageYOffset > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'smooth'
+    });
+  };
+
+  return (
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToBottom}
+          className="fixed bottom-5 right-5 bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+          aria-label="Scroll to bottom"
+        >
+          <ArrowDownIcon size={24} />
+        </button>
+      )}
+    </>
+  );
+};
 
 export function PromptEnhancerStream() {
   const [userPrompt, setUserPrompt] = useState("")
@@ -105,7 +146,6 @@ export function PromptEnhancerStream() {
           if (jsonStart !== -1 && jsonEnd !== -1) {
             const jsonString = sanitizedBuffer.slice(jsonStart, jsonEnd + 1)
             try {
-              console.log("Parsing first chunk JSON:", jsonString)
               const parsedData = JSON.parse(jsonString) // Parse JSON
               if (parsedData.enhanced_prompt) {
                 isFirstChunk = false // Flag to stop processing as first chunk
@@ -132,7 +172,6 @@ export function PromptEnhancerStream() {
 
         // Check if the [DONE] signal was received
         if (decodedChunk.trim() === "[DONE]") {
-          console.log("Received [DONE] signal.")
           break
         }
       }
@@ -201,6 +240,8 @@ export function PromptEnhancerStream() {
           await new Promise((resolve) => setTimeout(resolve, 1)); // Optional delay for better user experience
         }
       }
+
+      setAssistantResponse((prev) => prev.replace(/\[DONE\]$/, '').trim());
     } catch (error) {
       if (error.name !== 'AbortError') {
         console.error('Error streaming response:', error);
@@ -270,7 +311,6 @@ export function PromptEnhancerStream() {
         <p className="text-gray-600">What are you generating today?</p>
       </div>
       <div className="flex w-full mb-4">
-        {/* Left Panel (User Prompt) */}
         <div className="w-1/2 p-4 bg-gray-50">
 
           <Card className="flex flex-col" style={{ height: '250px' }}>
@@ -305,22 +345,18 @@ export function PromptEnhancerStream() {
           </Card>
         </div>
 
-        {/* Right Panel (Enhanced Prompt) */}
         <div className="w-1/2 p-4 bg-gray-50">
           <Card className="flex flex-col" style={{ height: '250px' }}>
             <CardContent className="pt-6 flex-grow overflow-hidden">
               <ScrollArea className="h-full">
                 
                 {enhancedPrompt ? (
-                  // <p className="text-gray-600 text-base font-italic">
                   <ReactMarkdown 
                   className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
                   remarkPlugins={[remarkGfm]}
-                  // rehypePlugins={[rehypeRaw]}
                 >
                     {enhancedPrompt}
                     </ReactMarkdown>
-                  // </p>
                 ) : (
                   <p className="text-gray-400" style={{ color: '#9CA3AF' }}>I will help enhance your prompt. You can submit the enhanced prompt and get the result.</p>
                 )}
@@ -353,7 +389,6 @@ export function PromptEnhancerStream() {
         </div>
       </div>
 
-      {/* Assistant Response (Below, Centered) */}
       {showAssistantResponse && (
         <div className="w-full px-4 flex justify-center">
           <Card className="w-3/4 flex flex-col relative" style={{ minHeight: '300px' }}>
@@ -409,6 +444,7 @@ export function PromptEnhancerStream() {
           </Card>
         </div>
       )}
+      <ScrollToBottomButton />
     </div>
   )
 }
