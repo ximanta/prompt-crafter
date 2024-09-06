@@ -14,10 +14,41 @@ export function PromptEnhancerStream() {
   const [isLoading, setIsLoading] = useState(false)
   const abortControllerRef = useRef<AbortController | null>(null)
   const [showAssistantResponse, setShowAssistantResponse] = useState(false)
+  const [isStreamingComplete, setIsStreamingComplete] = useState(false)
 
+  const handleStreamAssistantSubmit = async () => {
+    const response = await fetch('/answer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt: enhancedPrompt }),
+    });
+
+    if (!response.body) {
+      throw new Error('ReadableStream not supported in this browser.');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    // Clear the assistant response before starting a new stream
+    setAssistantResponse('');
+
+    while (!done) {
+      const { value, done: streamDone } = await reader.read();
+      done = streamDone;
+
+      // Decode and append the incoming data chunk by chunk to `assistantResponse`
+      const chunkValue = decoder.decode(value);
+      setAssistantResponse((prev) => prev + chunkValue);
+    }
+  };
   const handleStreamSubmit = async () => {
     setIsLoading(true)
     setEnhancedPrompt(""); // Clear previous content
+    setIsStreamingComplete(false) // Reset streaming status
     abortControllerRef.current = new AbortController()
     let buffer = ""; // Buffer to accumulate incomplete JSON
     let isFirstChunk = true; // Flag for handling the first chunk
@@ -83,7 +114,7 @@ export function PromptEnhancerStream() {
           const words = decodedChunk.split(" ")
           for (const word of words) {
             setEnhancedPrompt((prev) => prev + " " + word) // Append words one by one
-            await new Promise((resolve) => setTimeout(resolve, 50)) // Simulate word-by-word delay
+            await new Promise((resolve) => setTimeout(resolve, 10)) // Simulate word-by-word delay
           }
         }
 
@@ -101,6 +132,7 @@ export function PromptEnhancerStream() {
       setEnhancedPrompt((prev) =>
         prev.replace(/\[DONE\]$/, "").trim() // Remove [DONE] from the end
       )
+      setIsStreamingComplete(true)
     } catch (error) {
       if (error.name === "AbortError") {
         console.log("Fetch aborted")
@@ -119,11 +151,46 @@ export function PromptEnhancerStream() {
     }
   }
 
-  const handleSendToAssistant = (prompt: string) => {
-    setAssistantPrompt(prompt)
-    setAssistantResponse("This is a simulated response to: " + prompt)
-    setShowAssistantResponse(true)
-  }
+   const handleSubmitEnhancedPrompt = async () => {
+    try {
+      setShowAssistantResponse(true); // Show the response area
+      setAssistantResponse(''); // Clear previous response
+  
+      const response = await fetch("http://localhost:8000/answer", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: enhancedPrompt }),
+      });
+  
+      if (!response.body) {
+        throw new Error('ReadableStream not supported in this browser.');
+      }
+  
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+  
+      // Stream the response character by character
+      while (!done) {
+        const { value, done: streamDone } = await reader.read();
+        done = streamDone;
+  
+        // Decode the incoming chunk
+        const chunkValue = decoder.decode(value);
+        for (const char of chunkValue) {
+          // Append each character one by one to give a streaming effect
+          setAssistantResponse((prev) => prev + char);
+          await new Promise((resolve) => setTimeout(resolve, 1)); // Optional delay for better user experience
+        }
+      }
+    } catch (error) {
+      console.error('Error streaming response:', error);
+      setAssistantResponse('Error: Unable to get response from assistant.');
+    }
+  };
+  
 
   useEffect(() => {
     return () => {
@@ -190,7 +257,11 @@ export function PromptEnhancerStream() {
               <Button size="icon" variant="outline">
                 <CopyIcon className="h-4 w-4" />
               </Button>
-              <Button size="sm" onClick={() => handleSendToAssistant(enhancedPrompt)}>
+              <Button 
+                size="sm" 
+                onClick={handleSubmitEnhancedPrompt}
+                disabled={!isStreamingComplete || enhancedPrompt.length === 0}
+              >
                 <SendIcon className="h-4 w-4 mr-2" /> Send to Assistant
               </Button>
             </CardFooter>

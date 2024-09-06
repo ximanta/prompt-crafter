@@ -8,6 +8,7 @@ from langchain_core.messages import HumanMessage
 from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.responses import StreamingResponse
 import asyncio
+import logging
 
 # Load environment variables from .env file
 load_dotenv()
@@ -114,7 +115,24 @@ async def websocket_endpoint(websocket: WebSocket):
         except WebSocketDisconnect:
             print("Client disconnected")
             break
+        # Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+async def answer(user_prompt: str):
+    try:
+        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GEMINI_API_KEY, streaming=True)
         
+        async for chunk in llm.astream([{"role": "user", "content": user_prompt}]):
+            # Log the response chunk
+            logger.info(f"Gemini response chunk: {chunk.content}")
+            yield chunk.content
+        
+        # Send a final message to indicate the end of the stream
+        yield "[DONE]"
+    except Exception as e:
+        logger.error(f"Error in streaming: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error in streaming: {str(e)}")
 
 def enhance_prompt(user_prompt: str) -> dict:
     llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GEMINI_API_KEY)

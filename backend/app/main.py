@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from app.services.prompt_enhancer import enhance_prompt, enhance_prompt_stream
+from app.services.prompt_enhancer import enhance_prompt, enhance_prompt_stream, answer
 from fastapi import WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 
@@ -35,6 +35,11 @@ async def enhance_prompt_endpoint(request: PromptRequest):
 @app.post("/enhance_prompt_stream")
 async def enhance_prompt_stream_endpoint(request: PromptRequest):
     return StreamingResponse(enhance_prompt_stream(request.prompt), media_type="application/json")
+
+@app.post("/answer")
+async def answer_endpoint(request: PromptRequest):
+    return StreamingResponse(answer(request.prompt), media_type="application/json")
+
 
 @app.websocket("/ws/enhance_prompt")
 async def websocket_endpoint(websocket: WebSocket):
