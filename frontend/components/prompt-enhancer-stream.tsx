@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ArrowUpIcon, CopyIcon, RefreshCwIcon, SendIcon, WandIcon } from "lucide-react"
+import { ArrowUpIcon, CopyIcon, RefreshCwIcon, SendIcon, WandIcon, CheckIcon } from "lucide-react"
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -18,6 +18,7 @@ export function PromptEnhancerStream() {
   const abortControllerRef = useRef<AbortController | null>(null)
   const [showAssistantResponse, setShowAssistantResponse] = useState(false)
   const [isStreamingComplete, setIsStreamingComplete] = useState(false)
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleStreamAssistantSubmit = async () => {
     const response = await fetch('/answer', {
@@ -193,7 +194,23 @@ export function PromptEnhancerStream() {
       setAssistantResponse('Error: Unable to get response from assistant.');
     }
   };
-  
+
+  const handleCopy = useCallback(() => {
+    if (enhancedPrompt) {
+      navigator.clipboard.writeText(enhancedPrompt)
+        .then(() => {
+          setIsCopied(true);
+          setTimeout(() => {
+            setIsCopied(false);
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+        });
+    } else {
+      console.log("No enhanced prompt to copy");
+    }
+  }, [enhancedPrompt]);
 
   useEffect(() => {
     return () => {
@@ -213,7 +230,8 @@ export function PromptEnhancerStream() {
       </div>
       <div className="flex w-full mb-4">
         {/* Left Panel (User Prompt) */}
-        <div className="w-1/2 p-4 bg-white shadow-md">
+        <div className="w-1/2 p-4 bg-gray-50">
+
           <Card className="flex flex-col" style={{ height: '250px' }}>
             <CardContent className="flex-grow">
               <textarea
@@ -227,6 +245,7 @@ export function PromptEnhancerStream() {
               <Button size="icon" onClick={handleStreamSubmit} disabled={isLoading}>
                 {isLoading ? <RefreshCwIcon className="h-4 w-4 animate-spin" /> : <WandIcon className="h-4 w-4 text-purple-500" />}
               </Button>
+             
               <Button size="icon" variant="outline" onClick={() => {
                 setUserPrompt("");
                 setEnhancedPrompt("");
@@ -263,8 +282,17 @@ export function PromptEnhancerStream() {
               </ScrollArea>
             </CardContent>
             <CardFooter className="justify-end space-x-2">
-              <Button size="icon" variant="outline">
-                <CopyIcon className="h-4 w-4" />
+              <Button 
+                size="icon" 
+                variant="outline" 
+                onClick={handleCopy} 
+                disabled={!isStreamingComplete || enhancedPrompt.length === 0}
+              >
+                {isCopied ? (
+                  <span className="text-xs font-bold">Copied!</span>
+                ) : (
+                  <CopyIcon className="h-4 w-4" />
+                )}
               </Button>
               <Button 
                 size="sm" 
