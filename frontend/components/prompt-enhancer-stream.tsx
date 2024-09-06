@@ -331,6 +331,12 @@ export function PromptEnhancerStream() {
               <textarea
                 value={userPrompt}
                 onChange={(e) => setUserPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleStreamSubmit();
+                  }
+                }}
                 placeholder="Type your prompt here..."
                 className="w-full h-full p-2 pt-7 resize-none focus:outline-none ai-generated-font"
               />
