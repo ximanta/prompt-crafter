@@ -4,10 +4,15 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ArrowUpIcon, CopyIcon, RefreshCwIcon, SendIcon, WandIcon, CheckIcon } from "lucide-react"
+import { CopyIcon, RefreshCwIcon, SendIcon, WandIcon,  StopCircleIcon, LucideStopCircle,StopCircle,LucideCircleStop} from "lucide-react"
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
+import { FaStop } from "react-icons/fa6";
+import Tooltip, { TooltipProps } from '@mui/material/Tooltip';
+
+const TopTooltip = (props: TooltipProps) => (
+  <Tooltip {...props} placement="top" />
+);
 
 export function PromptEnhancerStream() {
   const [userPrompt, setUserPrompt] = useState("")
@@ -19,6 +24,8 @@ export function PromptEnhancerStream() {
   const [showAssistantResponse, setShowAssistantResponse] = useState(false)
   const [isStreamingComplete, setIsStreamingComplete] = useState(false)
   const [isCopied, setIsCopied] = useState(false);
+  const [isAssistantStreaming, setIsAssistantStreaming] = useState(false)
+  const assistantAbortControllerRef = useRef<AbortController | null>(null)
 
   const handleStreamAssistantSubmit = async () => {
     const response = await fetch('/answer', {
@@ -156,6 +163,8 @@ export function PromptEnhancerStream() {
   }
 
    const handleSubmitEnhancedPrompt = async () => {
+    setIsAssistantStreaming(true)
+    assistantAbortControllerRef.current = new AbortController()
     try {
       setShowAssistantResponse(true); // Show the response area
       setAssistantResponse(''); // Clear previous response
@@ -166,6 +175,7 @@ export function PromptEnhancerStream() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt: enhancedPrompt }),
+        signal: assistantAbortControllerRef.current.signal,
       });
   
       if (!response.body) {
@@ -190,10 +200,21 @@ export function PromptEnhancerStream() {
         }
       }
     } catch (error) {
-      console.error('Error streaming response:', error);
-      setAssistantResponse('Error: Unable to get response from assistant.');
+      if (error.name !== 'AbortError') {
+        console.error('Error streaming response:', error);
+        setAssistantResponse('Error: Unable to get response from assistant.');
+      }
+    } finally {
+      setIsAssistantStreaming(false)
     }
   };
+
+  const handleStopAssistantStreaming = () => {
+    if (assistantAbortControllerRef.current) {
+      assistantAbortControllerRef.current.abort()
+      setIsAssistantStreaming(false)
+    }
+  }
 
   const handleCopy = useCallback(() => {
     if (enhancedPrompt) {
@@ -309,13 +330,35 @@ export function PromptEnhancerStream() {
       {/* Assistant Response (Below, Centered) */}
       {showAssistantResponse && (
         <div className="w-full px-4 flex justify-center">
-          <Card className="w-3/4 flex flex-col" style={{ minHeight: '300px' }}>
-            <CardContent className="flex-grow overflow-hidden">
+          <Card className="w-3/4 flex flex-col relative" style={{ minHeight: '300px' }}>
+            <div className="absolute top-2 right-2 flex space-x-2">
+            <TopTooltip title="Stop">
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="rounded-full bg-black"
+                onClick={handleStopAssistantStreaming}
+                disabled={!isAssistantStreaming}
+              >
+                <FaStop className="h-4 w-4 text-white" />
+              </Button>
+            </TopTooltip>
+            <TopTooltip title="Regenerate">
+              <Button size="icon" variant="ghost">
+                <RefreshCwIcon className="h-4 w-4" />
+              </Button>
+            </TopTooltip>
+            <TopTooltip title="Copy">
+              <Button size="icon" variant="ghost">
+                <CopyIcon className="h-4 w-4" />
+              </Button>
+            </TopTooltip>
+            </div>
+            <CardContent className="flex-grow overflow-hidden pt-8">
               <ScrollArea className="h-full">
                 <ReactMarkdown 
                   className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
                   remarkPlugins={[remarkGfm]}
-                  // rehypePlugins={[rehypeRaw]}
                 >
                   {assistantResponse}
                 </ReactMarkdown>
