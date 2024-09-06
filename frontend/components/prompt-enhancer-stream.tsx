@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { FaStop } from "react-icons/fa6";
 import Tooltip, { TooltipProps } from '@mui/material/Tooltip';
+import '../app/globals.css';
 
 import { ArrowDownIcon } from 'lucide-react'; // Assuming you're using Lucide icons
 
@@ -21,7 +22,7 @@ const ScrollToBottomButton = () => {
 
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
+      if (window.pageYOffset > 100) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
@@ -29,6 +30,7 @@ const ScrollToBottomButton = () => {
     };
 
     window.addEventListener('scroll', toggleVisibility);
+    toggleVisibility();
 
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
@@ -319,7 +321,7 @@ export function PromptEnhancerStream() {
         <h1 className="text-3xl font-bold mb-2 flex items-center justify-center">
           <WandIcon className="mr-2" /> Prompt Crafter
         </h1>
-        <p className="text-gray-600">What are you generating today?</p>
+        <p className="ai-generated-font">What are you generating today?</p>
       </div>
       <div className="flex w-full mb-4">
         <div className="w-1/2 p-4 bg-gray-50">
@@ -329,8 +331,8 @@ export function PromptEnhancerStream() {
               <textarea
                 value={userPrompt}
                 onChange={(e) => setUserPrompt(e.target.value)}
-                placeholder="Enter your prompt here..."
-                className="w-full h-full p-2 resize-none focus:outline-none"
+                placeholder="Type your prompt here..."
+                className="w-full h-full p-2 pt-7 resize-none focus:outline-none ai-generated-font"
               />
             </CardContent>
             <CardFooter className="justify-end space-x-2">
@@ -359,11 +361,11 @@ export function PromptEnhancerStream() {
         <div className="w-1/2 p-4 bg-gray-50">
           <Card className="flex flex-col" style={{ height: '250px' }}>
             <CardContent className="pt-6 flex-grow overflow-hidden">
-              <ScrollArea className="h-full">
+              <ScrollArea className="h-full ai-generated-font">
                 
                 {enhancedPrompt ? (
                   <ReactMarkdown 
-                  className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
+                  className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none ai-generated-font"
                   remarkPlugins={[remarkGfm]}
                 >
                     {enhancedPrompt}
@@ -443,9 +445,9 @@ export function PromptEnhancerStream() {
             </Tooltip>
             </div>
             <CardContent className="flex-grow overflow-hidden pt-8">
-              <ScrollArea className="h-full">
+              <ScrollArea className="pt-4">
                 <ReactMarkdown 
-                  className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none"
+                  className="ai-generated-font"
                   remarkPlugins={[remarkGfm]}
                 >
                   {assistantResponse}

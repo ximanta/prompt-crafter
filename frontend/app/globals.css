@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Define the ai-generated-font style */
+.ai-generated-font {
+  font-family: 'Roboto', 'Open Sans', 'Lato', sans-serif; /* Choose from these fonts */
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  color: #5f5f5f !important; /* A dark gray for good contrast */
+  /* background-color: #F8F9FA; Light background */
+  /* padding: 12px; */
+  /* border-radius: 6px; */
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
+  letter-spacing: 0.5px; /* Slightly increased spacing for a clean look */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
