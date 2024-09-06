@@ -26,6 +26,7 @@ export function PromptEnhancerStream() {
   const [isCopied, setIsCopied] = useState(false);
   const [isAssistantStreaming, setIsAssistantStreaming] = useState(false)
   const assistantAbortControllerRef = useRef<AbortController | null>(null)
+  const [isAssistantResponseCopied, setIsAssistantResponseCopied] = useState(false);
 
   const handleStreamAssistantSubmit = async () => {
     const response = await fetch('/answer', {
@@ -163,6 +164,7 @@ export function PromptEnhancerStream() {
   }
 
    const handleSubmitEnhancedPrompt = async () => {
+    setAssistantResponse(''); 
     setIsAssistantStreaming(true)
     assistantAbortControllerRef.current = new AbortController()
     try {
@@ -233,6 +235,21 @@ export function PromptEnhancerStream() {
     }
   }, [enhancedPrompt]);
 
+  const handleCopyAssistantResponse = useCallback(() => {
+    if (assistantResponse) {
+      navigator.clipboard.writeText(assistantResponse)
+        .then(() => {
+          setIsAssistantResponseCopied(true);
+          setTimeout(() => {
+            setIsAssistantResponseCopied(false);
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+        });
+    }
+  }, [assistantResponse]);
+
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -240,6 +257,9 @@ export function PromptEnhancerStream() {
       }
     }
   }, [])
+
+ 
+   
 
   return (
     <div className="flex flex-col h-screen w-full bg-gray-100">
@@ -263,20 +283,24 @@ export function PromptEnhancerStream() {
               />
             </CardContent>
             <CardFooter className="justify-end space-x-2">
-              <Button size="icon" onClick={handleStreamSubmit} disabled={isLoading}>
-                {isLoading ? <RefreshCwIcon className="h-4 w-4 animate-spin" /> : <WandIcon className="h-4 w-4 text-purple-500" />}
-              </Button>
+              <TopTooltip title="Enhance Prompt">
+                <Button size="icon" onClick={handleStreamSubmit} disabled={isLoading}>
+                  {isLoading ? <RefreshCwIcon className="h-4 w-4 animate-spin" /> : <WandIcon className="h-4 w-4 text-purple-500" />}
+                </Button>
+              </TopTooltip>
              
-              <Button size="icon" variant="outline" onClick={() => {
-                setUserPrompt("");
-                setEnhancedPrompt("");
-                setAssistantPrompt("");
-                setAssistantResponse("");
-                setIsLoading(false);
-                setShowAssistantResponse(false);
-              }}>
-                <RefreshCwIcon className="h-4 w-4" />
-              </Button>
+              <TopTooltip title="Reset">
+                <Button size="icon" variant="outline" onClick={() => {
+                  setUserPrompt("");
+                  setEnhancedPrompt("");
+                  setAssistantPrompt("");
+                  setAssistantResponse("");
+                  setIsLoading(false);
+                  setShowAssistantResponse(false);
+                }}>
+                  <RefreshCwIcon className="h-4 w-4" />
+                </Button>
+              </TopTooltip>
             </CardFooter>
           </Card>
         </div>
@@ -303,18 +327,20 @@ export function PromptEnhancerStream() {
               </ScrollArea>
             </CardContent>
             <CardFooter className="justify-end space-x-2">
-              <Button 
-                size="icon" 
-                variant="outline" 
-                onClick={handleCopy} 
-                disabled={!isStreamingComplete || enhancedPrompt.length === 0}
-              >
-                {isCopied ? (
-                  <span className="text-xs font-bold">Copied!</span>
-                ) : (
-                  <CopyIcon className="h-4 w-4" />
-                )}
-              </Button>
+              <TopTooltip title="Copy">
+                <Button 
+                  size="icon" 
+                  variant="outline" 
+                  onClick={handleCopy} 
+                  disabled={!isStreamingComplete || enhancedPrompt.length === 0}
+                >
+                  {isCopied ? (
+                    <span className="text-xs font-bold">Copied!</span>
+                  ) : (
+                    <CopyIcon className="h-4 w-4" />
+                  )}
+                </Button>
+              </TopTooltip>
               <Button 
                 size="sm" 
                 onClick={handleSubmitEnhancedPrompt}
@@ -343,16 +369,32 @@ export function PromptEnhancerStream() {
                 <FaStop className="h-4 w-4 text-white" />
               </Button>
             </TopTooltip>
-            <TopTooltip title="Regenerate">
-              <Button size="icon" variant="ghost">
+            <TopTooltip title="Regenerate" placement="top">
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                onClick={handleSubmitEnhancedPrompt}
+                disabled={!isStreamingComplete || enhancedPrompt.length === 0 || isAssistantStreaming}
+              >
                 <RefreshCwIcon className="h-4 w-4" />
               </Button>
             </TopTooltip>
-            <TopTooltip title="Copy">
-              <Button size="icon" variant="ghost">
-                <CopyIcon className="h-4 w-4" />
-              </Button>
-            </TopTooltip>
+            <Tooltip title={isAssistantResponseCopied ? "Copied!" : "Copy"} placement="top">
+              <span> {/* Wrap with span to allow tooltip on disabled button */}
+                <Button 
+                  size="icon" 
+                  variant="ghost"
+                  onClick={handleCopyAssistantResponse}
+                  disabled={isAssistantStreaming || assistantResponse.length === 0}
+                >
+                  {isAssistantResponseCopied ? (
+                    <span className="text-xs font-bold">✓</span>
+                  ) : (
+                    <CopyIcon className="h-4 w-4" />
+                  )}
+                </Button>
+              </span>
+            </Tooltip>
             </div>
             <CardContent className="flex-grow overflow-hidden pt-8">
               <ScrollArea className="h-full">
