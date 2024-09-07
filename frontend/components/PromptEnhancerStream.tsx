@@ -24,6 +24,8 @@ export function PromptEnhancerStream() {
     handleCopyAssistantResponse,
     isAssistantResponseCopied,
     handleReset,
+    isWaitingForStream, // Add this new value
+    hasReceivedContent, // Add this new value
   } = useAIInteraction()
 
   const [showAssistantCard, setShowAssistantCard] = useState(false)
@@ -82,6 +84,8 @@ export function PromptEnhancerStream() {
           enhancedPrompt={enhancedPrompt}
           isStreamingComplete={isEnhancementComplete}
           handleSubmitEnhancedPrompt={handleSubmitEnhancedPromptWrapper}
+          isWaitingForStream={isWaitingForStream} // Add this new prop
+          hasReceivedContent={hasReceivedContent} // Add this prop
         />
       </div>
       {showAssistantCard && (
@@ -101,4 +105,3 @@ export function PromptEnhancerStream() {
     </div>
   )
 }
-

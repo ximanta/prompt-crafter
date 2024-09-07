@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -16,7 +16,7 @@ interface AssistantResponseCardProps {
   handleCopyAssistantResponse: () => void
   isStreamingComplete: boolean
   enhancedPrompt: string
-  isVisible: boolean // Add this new prop
+  isVisible: boolean
 }
 
 export function AssistantResponseCard({ 
@@ -27,22 +27,37 @@ export function AssistantResponseCard({
     handleCopyAssistantResponse, 
     isStreamingComplete, 
     enhancedPrompt, 
-    isVisible // Add this new prop
+    isVisible
   }: AssistantResponseCardProps) {
     const [isLocalCopied, setIsLocalCopied] = useState(false)
-  
+    const [dots, setDots] = useState<boolean[]>([false, false, false, false, false, false])
+
     const handleLocalCopy = () => {
       handleCopyAssistantResponse()
       setIsLocalCopied(true)
       setTimeout(() => setIsLocalCopied(false), 2000)
     }
-  
-    // Log assistantResponse to check content
+
     useEffect(() => {
-    }, [assistantResponse]);
-  
+      let interval: NodeJS.Timeout
+      if (isAssistantStreaming && assistantResponse.length === 0) {
+        let index = 0
+        interval = setInterval(() => {
+          setDots(prev => {
+            const newDots = [...prev]
+            newDots[index] = true
+            index = (index + 1) % 6
+            return newDots
+          })
+        }, 500)
+      } else {
+        setDots([false, false, false, false, false, false])
+      }
+      return () => clearInterval(interval)
+    }, [isAssistantStreaming, assistantResponse])
+
     if (!isVisible) {
-      return null // Don't render anything if not visible
+      return null
     }
 
     return (
@@ -89,14 +104,26 @@ export function AssistantResponseCard({
           </div>
           <CardContent className="flex-grow overflow-hidden pt-8">
             <ScrollArea className="pt-4">
-              <ReactMarkdown 
-                // className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none ai-generated-font"
-                className="prose markdown-content ai-generated-font"
-                remarkPlugins={[remarkGfm]}
-
-              >
-                {assistantResponse ? assistantResponse : "Generating Content....."}
-              </ReactMarkdown>
+              {assistantResponse ? (
+                <ReactMarkdown 
+                  className="prose markdown-content ai-generated-font"
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {assistantResponse}
+                </ReactMarkdown>
+              ) : (
+                <div className="flex items-center">
+                  <span className="font-semibold">Generating Content</span>
+                  <div className="flex ml-2">
+                    {dots.map((isActive, index) => (
+                      <span 
+                        key={index} 
+                        className={`inline-block w-2 h-2 mx-0.5 ${isActive ? 'bg-gray-500' : 'bg-gray-200'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </ScrollArea>
           </CardContent>
         </Card>

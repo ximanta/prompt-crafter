@@ -2,7 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes run {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
 
+.running-robot .left-leg {
+  animation: run 0.5s infinite;
+}
+
+.running-robot .right-leg {
+  animation: run 0.5s infinite 0.25s;
+}
+
+.running-robot {
+  animation: slight-bounce 1s infinite;
+}
+
+@keyframes slight-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
 /* Override the prose width constraints */
 .prose {
   max-width: 100%; /* Make it take full width */

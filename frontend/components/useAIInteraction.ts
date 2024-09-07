@@ -14,11 +14,16 @@ export function useAIInteraction() {
 
   const [isCopied, setIsCopied] = useState(false)
   const [showAssistantResponse, setShowAssistantResponse] = useState(false)
+  const [isWaitingForStream, setIsWaitingForStream] = useState(false)
+
+  const [hasReceivedContent, setHasReceivedContent] = useState(false)
 
   const handleEnhancePrompt = useCallback(async () => {
     setIsEnhancing(true)
     setEnhancedPrompt("")
     setIsEnhancementComplete(false)
+    setIsWaitingForStream(true)
+    setHasReceivedContent(false) // Reset this when starting a new enhancement
     abortControllerRef.current = new AbortController()
     let buffer = ""
     let isFirstChunk = true
@@ -41,20 +46,18 @@ export function useAIInteraction() {
         const decodedChunk = decoder.decode(value, { stream: true })
         buffer += decodedChunk
 
-        const sanitizedBuffer = buffer
-          .replace(/[\n\r]+/g, " ")
-          .replace(/[*•-]+/g, "- ")
-          .replace(/[\\]/g, "")
-
         if (isFirstChunk) {
-          const jsonStart = sanitizedBuffer.indexOf("{")
-          const jsonEnd = sanitizedBuffer.indexOf("}")
-          if (jsonStart !== -1 && jsonEnd !== -1) {
-            const jsonString = sanitizedBuffer.slice(jsonStart, jsonEnd + 1)
+          setIsWaitingForStream(false)
+          const jsonStart = buffer.indexOf("{")
+          const jsonEnd = buffer.lastIndexOf("}")
+          if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+            const jsonString = buffer.slice(jsonStart, jsonEnd + 1)
             try {
-              const parsedData = JSON.parse(jsonString)
+              // Parse JSON while preserving newlines
+              const parsedData = JSON.parse(jsonString.replace(/\n/g, "\\n"))
               if (parsedData.enhanced_prompt) {
                 isFirstChunk = false
+                setHasReceivedContent(true) // Set this to true when we start receiving content
                 const words = parsedData.enhanced_prompt.split(" ")
                 for (const word of words) {
                   setEnhancedPrompt((prev) => prev + " " + word)
@@ -63,9 +66,14 @@ export function useAIInteraction() {
                 buffer = buffer.slice(jsonEnd + 1)
               }
             } catch (error) {
+              console.error("Error parsing JSON:", error)
+              console.log("Problematic JSON string:", jsonString)
+              // Continue processing without breaking the loop
+              isFirstChunk = false
             }
           }
         } else {
+          setHasReceivedContent(true) // Set this to true for subsequent chunks as well
           const words = decodedChunk.split(" ")
           for (const word of words) {
             setEnhancedPrompt((prev) => prev + " " + word)
@@ -88,6 +96,7 @@ export function useAIInteraction() {
       }
     } finally {
       setIsEnhancing(false)
+      setIsWaitingForStream(false)
     }
   }, [userPrompt])
 
@@ -181,6 +190,7 @@ export function useAIInteraction() {
     setIsAssistantResponseCopied(false)
     setIsCopied(false)
     setShowAssistantResponse(false)
+    setHasReceivedContent(false) // Reset this when resetting
   }, [])
 
   return {
@@ -199,5 +209,7 @@ export function useAIInteraction() {
     handleCopyAssistantResponse,
     isAssistantResponseCopied,
     handleReset,
+    isWaitingForStream,
+    hasReceivedContent,
   }
 }
