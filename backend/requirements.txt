@@ -9,7 +9,7 @@ markdown==3.4.3
 langchain-core>=0.1.0
 fastapi==0.95.0
 uvicorn==0.20.0
-dotenv==0.0.4
+python-dotenv==1.0.0
 
 
 
