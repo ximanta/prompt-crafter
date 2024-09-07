@@ -73,7 +73,8 @@ export function EnhancedPromptCard({
                 {enhancedPrompt}
               </ReactMarkdown>
             ) : (
-              <p className="text-gray-400 text-center">Let's create something amazing today!</p>
+<p className="text-gray-400 text-center">Let&apos;s create something amazing today!</p>
+
             )}
           </ScrollArea>
         </CardContent>
