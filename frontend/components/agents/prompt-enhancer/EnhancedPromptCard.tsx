@@ -43,9 +43,9 @@ export function EnhancedPromptCard({
   }
 
   return (
-    <div className="w-1/2 p-4 bg-gray-50">
+    <div className="p-4 bg-gray-50">
       <Card className="flex flex-col h-[250px]">
-        <CardContent className="pt-6 flex-grow overflow-hidden">
+        <CardContent className=" flex-grow overflow-hidden">
           <ScrollArea className="h-full ai-generated-font">
             {isWaitingForStream ? (
               <div className="flex flex-col items-center justify-center h-full">
@@ -78,7 +78,7 @@ export function EnhancedPromptCard({
             )}
           </ScrollArea>
         </CardContent>
-        <CardFooter className="justify-end space-x-2">
+        <CardFooter className="justify-end ">
           <TopTooltip title={isCopied ? "Copied!" : "Copy"}>
             <Button 
               size="icon" 

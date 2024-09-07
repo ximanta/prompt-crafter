@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+
 import { Button } from "@/components/agents/prompt-enhancer/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/agents/prompt-enhancer/ui/card"
 import { RotateCcwIcon, WandIcon, Loader2 } from "lucide-react"
@@ -31,16 +32,16 @@ export function UserPromptCard({
   }
 
   return (
-    <div className="w-1/2 p-4 bg-gray-50 relative">
+    <div className="p-4 bg-gray-50 relative">
    
-      <Card className="flex flex-col" style={{ height: '250px', paddingTop: '20px' }}>
+      <Card className="flex flex-col" style={{ height: '250px'}}>
         <CardContent className="flex-grow">
           <textarea
             value={userPrompt}
             onChange={(e) => setUserPrompt(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your prompt here..."
-            className={`w-full h-full p-2 resize-none focus:outline-none ai-generated-font ${
+            className={`w-full h-full resize-none focus:outline-none ai-generated-font ${
               isLoading ? 'bg-gray-100 cursor-not-allowed' : ''
             }`}
             disabled={isLoading}

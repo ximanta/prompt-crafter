@@ -10,7 +10,8 @@ import LoginButton from "./LoginButton"
 import Profile from "@/components/common/user_profile"
 import { useAuth0 } from "@auth0/auth0-react"
 import LogoutButton from "./LogoutButton"
-
+import { PromptEnhancerStream } from '../agents/prompt-enhancer/PromptEnhancerStream'
+import { Header } from "@/components/common/Header"
 
 export function LandingPage() {
   const [currentView, setCurrentView] = useState('home')
@@ -23,6 +24,8 @@ export function LandingPage() {
     switch(currentView) {
       case 'pricing':
         return <Pricing />
+      case 'agent':
+        return <PromptEnhancerStream />
       default:
         return (
           <>
@@ -124,49 +127,9 @@ export function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100">
-      <header className="px-4 lg:px-6 h-14 flex items-center border-b border-gray-800">
-        <Link 
-          className="flex items-center justify-center cursor-pointer" 
-          href="#"
-          onClick={() => setCurrentView('home')}
-        >
-          <Sparkles className="h-6 w-6 text-blue-400" />
-          <span className="ml-2 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">RockGenie</span>
-        </Link>
-        <nav className="ml-auto flex items-center gap-4 sm:gap-6">
-          <button 
-            className="text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer" 
-            onClick={() => setCurrentView('home')}
-          >
-            Features
-          </button>
-          <button 
-            className="text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer" 
-            onClick={() => setCurrentView('home')}
-          >
-            Agents
-          </button>
-          <button 
-            className="text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer" 
-            onClick={() => setCurrentView('pricing')}
-          >
-            Pricing
-          </button>
-          <button className="text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer">
-            Contact
-          </button>
-          {isLoading && <div>Loading...</div>}
-          {!isLoading && !isAuthenticated && <LoginButton />}
-          {!isLoading && isAuthenticated && (
-            <div>
-              <p>Welcome, {user?.name}</p>
-              <LogoutButton />
-            </div>
-          )}
-        </nav>
-      </header>
-      <main className="flex-1">
+    <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100">     
+      <Header setCurrentView={setCurrentView} currentView={currentView} />
+      <main className="flex-grow">
         {renderView()}
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t border-gray-800">

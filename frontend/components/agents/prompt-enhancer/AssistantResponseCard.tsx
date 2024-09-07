@@ -63,8 +63,9 @@ export function AssistantResponseCard({
     }
 
     return (
-      <div className="w-full px-4 flex justify-center">
-        <Card className="w-3/4 flex flex-col relative" style={{ minHeight: '300px' }}>
+      <div className="w-full px-4 flex ">
+         <Card className="flex flex-col relative w-full" style={{ minHeight: '300px' }}>
+
           <div className="absolute top-2 right-2 flex space-x-2">
             <TopTooltip title="Stop">
               <Button 

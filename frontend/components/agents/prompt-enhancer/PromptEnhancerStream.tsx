@@ -64,29 +64,36 @@ export function PromptEnhancerStream() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-full bg-gray-100">
-      <div className="w-full text-center mb-8">
+    <div className="w-[95.6vw] min-h-screen bg-blue-500" style={{ border: '1px solid blue' }}>
+ 
+
+       <div className="container px-4 md:px-6" style={{ border: '1px solid green' }}>
         <h1 className="text-3xl font-bold mb-2 flex items-center justify-center">
           <WandIcon className="mr-2" /> Prompt Crafter
         </h1>
         <p className="ai-generated-font">What are you generating today?</p>
       </div>
-      <div className="flex w-full mb-4">
-        <UserPromptCard
-          userPrompt={userPrompt}
-          setUserPrompt={setUserPrompt}
-          handleStreamSubmit={handleEnhancePromptWrapper}
-          isLoading={isEnhancing}
-          handleReset={handleReset}
-          resetView={resetView} // Pass the new resetView function
-        />
-        <EnhancedPromptCard
-          enhancedPrompt={enhancedPrompt}
-          isStreamingComplete={isEnhancementComplete}
-          handleSubmitEnhancedPrompt={handleSubmitEnhancedPromptWrapper}
-          isWaitingForStream={isWaitingForStream} // Add this new prop
-          hasReceivedContent={hasReceivedContent} // Add this prop
-        />
+      <div className="grid lg:grid-cols-12">
+      <div className="lg:col-span-5  ml-6" style={{ border: '1px solid red' }}>
+          <UserPromptCard
+            userPrompt={userPrompt}
+            setUserPrompt={setUserPrompt}
+            handleStreamSubmit={handleEnhancePromptWrapper}
+            isLoading={isEnhancing}
+            handleReset={handleReset}
+            resetView={resetView} // Pass the new resetView function
+          />
+        </div>
+      <div className="lg:col-span-7 mr-6" style={{ border: '1px solid red' }}>
+          <EnhancedPromptCard
+            enhancedPrompt={enhancedPrompt}
+            isStreamingComplete={isEnhancementComplete}
+            handleSubmitEnhancedPrompt={handleSubmitEnhancedPromptWrapper}
+            isWaitingForStream={isWaitingForStream} // Add this new prop
+            hasReceivedContent={hasReceivedContent} // Add this prop
+          />
+        </div>     
+      
       </div>
       {showAssistantCard && (
         <AssistantResponseCard
@@ -101,7 +108,8 @@ export function PromptEnhancerStream() {
           isVisible={showAssistantCard} // Add this prop
         />
       )}
-      <ScrollToBottomButton />
-    </div>
-  )
+      <ScrollToBottomButton /> 
+   
+     </div>
+   )
 }
