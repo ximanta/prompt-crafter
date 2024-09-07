@@ -12,12 +12,13 @@ import { useAuth0 } from "@auth0/auth0-react"
 import LogoutButton from "./LogoutButton"
 import { PromptEnhancerStream } from '../agents/prompt-enhancer/PromptEnhancerStream'
 import { Header } from "@/components/common/Header"
-
+import { ThemeToggle } from "@/components/common/ThemeToggle";
+import GradientTest from './GradientTest'
 export function LandingPage() {
   const [currentView, setCurrentView] = useState('home')
   const { isAuthenticated, isLoading, logout, user } = useAuth0()
 
-  
+
 
 
   const renderView = () => {
@@ -29,7 +30,7 @@ export function LandingPage() {
       default:
         return (
           <>
-            <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-gray-900 to-gray-800">
+            <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-gray-900 to-gray-800  .dark">
               <div className="container px-4 md:px-6">
                 <div className="flex flex-col items-center space-y-4 text-center">
                   <div className="space-y-2">
@@ -41,7 +42,7 @@ export function LandingPage() {
                     </p>
                   </div>
                   <div className="space-x-4">
-                    <Button className="bg-blue-500 text-white hover:bg-blue-600 transition-colors">Get Started</Button>
+                    <Button  className="bg-blue-500 text-white hover:bg-blue-600 transition-colors">Get Started</Button>
                     <Button variant="outline" className="text-blue-400 border-blue-400 hover:bg-blue-400/10 transition-colors">Learn More</Button>
                   </div>
                 </div>
@@ -127,9 +128,9 @@ export function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100">     
+    <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100 ">     
       <Header setCurrentView={setCurrentView} currentView={currentView} />
-      <main className="flex-grow">
+     <main className="flex-grow">
         {renderView()}
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t border-gray-800">

@@ -23,12 +23,12 @@ export function Header({ setCurrentView, currentView }: HeaderProps) {
         <span className="ml-2 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">RockGenie</span>
       </Link>
       <nav className="ml-auto flex items-center gap-4 sm:gap-6">
-        <button 
-          className={`text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer ${currentView === 'home' ? 'text-blue-400' : ''}`}
-          onClick={() => setCurrentView && setCurrentView('home')}
-        >
-          Features
-        </button>
+      <button 
+            className="text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer" 
+            onClick={() => setCurrentView && setCurrentView('home')}
+          >
+            Features
+          </button>
         <button 
           className={`text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer ${currentView === 'agent' ? 'text-blue-400' : ''}`}
           onClick={() => setCurrentView && setCurrentView('agent')}
