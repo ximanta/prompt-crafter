@@ -16,6 +16,7 @@ interface AssistantResponseCardProps {
   handleCopyAssistantResponse: () => void
   isStreamingComplete: boolean
   enhancedPrompt: string
+  isAssistantResponseCopied: boolean
   isVisible: boolean
 }
 
@@ -27,6 +28,7 @@ export function AssistantResponseCard({
     handleCopyAssistantResponse, 
     isStreamingComplete, 
     enhancedPrompt, 
+    isAssistantResponseCopied, 
     isVisible
   }: AssistantResponseCardProps) {
     const [isLocalCopied, setIsLocalCopied] = useState(false)

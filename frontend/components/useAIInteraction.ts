@@ -92,8 +92,8 @@ export function useAIInteraction() {
       )
       setEnhancedPrompt((prev) => prev.replace(/\[DONE\]$/, "").trim())
       setIsEnhancementComplete(true)
-    } catch (error) {
-      if (error.name !== "AbortError") {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== "AbortError") {
         console.error("Error streaming prompt:", error)
         setEnhancedPrompt("Error enhancing prompt. Please try again.")
       }
@@ -101,7 +101,7 @@ export function useAIInteraction() {
       setIsEnhancing(false)
       setIsWaitingForStream(false)
     }
-  }, [userPrompt])
+  }, [userPrompt, apiUrl])
 
   const handleSubmitEnhancedPrompt = useCallback(async () => {
     setAssistantResponse('')
@@ -144,8 +144,8 @@ export function useAIInteraction() {
       }
 
       setAssistantResponse((prev) => prev.replace(/\[DONE\]$/, '').trim())
-    } catch (error) {
-      if (error.name !== 'AbortError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Error streaming response:', error)
         setAssistantResponse('Error: Unable to get response from assistant.')
       }
