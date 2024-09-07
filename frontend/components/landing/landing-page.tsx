@@ -5,11 +5,19 @@ import Link from "next/link"
 import { Button } from "@/components/landing/ui/button_landing"
 import { Input } from "@/components/landing/ui/input_landing"
 import { Sparkles, Code, PenTool, Zap, ChevronRight } from "lucide-react"
-import { LoginModal } from "./login-modal"
 import { Pricing } from "./pricing"
+import LoginButton from "./LoginButton"
+import Profile from "@/components/common/user_profile"
+import { useAuth0 } from "@auth0/auth0-react"
+import LogoutButton from "./LogoutButton"
+
 
 export function LandingPage() {
   const [currentView, setCurrentView] = useState('home')
+  const { isAuthenticated, isLoading, logout, user } = useAuth0()
+
+  
+
 
   const renderView = () => {
     switch(currentView) {
@@ -148,7 +156,14 @@ export function LandingPage() {
           <button className="text-sm font-medium hover:text-blue-400 transition-colors cursor-pointer">
             Contact
           </button>
-          <LoginModal />
+          {isLoading && <div>Loading...</div>}
+          {!isLoading && !isAuthenticated && <LoginButton />}
+          {!isLoading && isAuthenticated && (
+            <div>
+              <p>Welcome, {user?.name}</p>
+              <LogoutButton />
+            </div>
+          )}
         </nav>
       </header>
       <main className="flex-1">
