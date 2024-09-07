@@ -24,7 +24,9 @@ class PromptRequest(BaseModel):
 
 class PromptResponse(BaseModel):
     enhanced_prompt: str
-
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
 @app.post("/enhance_prompt", response_model=PromptResponse)
 async def enhance_prompt_endpoint(request: PromptRequest):
     result = enhance_prompt(request.prompt)

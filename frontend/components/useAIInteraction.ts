@@ -17,6 +17,7 @@ export function useAIInteraction() {
   const [isWaitingForStream, setIsWaitingForStream] = useState(false)
 
   const [hasReceivedContent, setHasReceivedContent] = useState(false)
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const handleEnhancePrompt = useCallback(async () => {
     setIsEnhancing(true)
@@ -29,7 +30,9 @@ export function useAIInteraction() {
     let isFirstChunk = true
 
     try {
-      const response = await fetch("http://localhost:8000/enhance_prompt_stream", {
+      console.log("API URL:", apiUrl);  // Debugging step
+
+      const response = await fetch(`${apiUrl}/enhance_prompt_stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: userPrompt }),
@@ -108,7 +111,7 @@ export function useAIInteraction() {
     try {
       setShowAssistantResponse(true)
       
-      const response = await fetch("http://localhost:8000/answer", {
+      const response = await fetch(`${apiUrl}/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: enhancedPrompt }),
