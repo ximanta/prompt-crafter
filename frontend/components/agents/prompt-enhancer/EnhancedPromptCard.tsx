@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/agents/prompt-enhancer/ui/button"
+import { Card, CardContent, CardFooter } from "@/components/agents/prompt-enhancer/ui/card"
+import { ScrollArea } from "@/components/agents/prompt-enhancer/ui/scroll-area"
 import { CopyIcon, SendIcon } from "lucide-react"
 import { TopTooltip } from "./TopTooltip"
 import ReactMarkdown from 'react-markdown'

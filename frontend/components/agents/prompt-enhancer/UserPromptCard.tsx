@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/agents/prompt-enhancer/ui/button"
+import { Card, CardContent, CardFooter } from "@/components/agents/prompt-enhancer/ui/card"
 import { RotateCcwIcon, WandIcon, Loader2 } from "lucide-react"
 import { TopTooltip } from "./TopTooltip"
 
