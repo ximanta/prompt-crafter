@@ -25,7 +25,7 @@ export function LandingPage() {
   const handleAgentLaunch = (agentId: number) => {
     console.log(`Launching agent with ID: ${agentId}`)
     setSelectedAgentId(agentId)
-    setCurrentView('agent')
+    setCurrentView('agent-view')
   }
   useEffect(() => {
     console.log("currentView updated to:", currentView);
@@ -36,13 +36,12 @@ export function LandingPage() {
     
       case 'pricing':
         return <Pricing />
-      case 'agent':
+      case 'agent-view':
         if (selectedAgentId === 3) { // Assuming 3 is the ID for the Prompt Engineer
           return <PromptEnhancerStream />
         }
-        // Add more cases for other agents as needed
+      case 'agent':
         return <AgentGrid onAgentLaunch={handleAgentLaunch} />
-
       default:
         return (
           <>
