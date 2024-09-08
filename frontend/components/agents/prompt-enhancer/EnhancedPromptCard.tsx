@@ -43,10 +43,10 @@ export function EnhancedPromptCard({
   }
 
   return (
-    <div className="p-4 bg-gray-50">
-      <Card className="flex flex-col h-[250px]">
+    <div className="bg-gray-900 p-6 space-y-6">
+      <Card className="bg-gray-800 border-gray-700 flex flex-col" style={{ height: '250px' }}>
         <CardContent className=" flex-grow overflow-hidden">
-          <ScrollArea className="h-full ai-generated-font">
+          <ScrollArea className="h-full">
             {isWaitingForStream ? (
               <div className="flex flex-col items-center justify-center h-full">
                 <p className="text-lg font-semibold mb-2">Hang On!!</p>
@@ -66,14 +66,17 @@ export function EnhancedPromptCard({
                 </div>
               </div>
             ) : hasReceivedContent ? (
+              <div className="text-gray-400 font-sans text-base leading-relaxed pt-4"> {/* Match styles here */}
+
               <ReactMarkdown 
-                className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none ai-generated-font"
+                // className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none "
                 remarkPlugins={[remarkGfm]}
               >
                 {enhancedPrompt}
               </ReactMarkdown>
+              </div>
             ) : (
-<p className="text-gray-400 text-center">Let&apos;s create something amazing today!</p>
+<p className="text-center text-gray-400 pt-4">Let&apos;s create something amazing today!</p>
 
             )}
           </ScrollArea>

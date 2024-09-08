@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from "next/link"
 import { Button } from "@/components/landing/ui/button_landing"
 import { Input } from "@/components/landing/ui/input_landing"
@@ -14,19 +14,35 @@ import { AgentGrid } from "@/components/agents/prompt-enhancer/AgentGrid";
 import { Header } from "@/components/common/Header"
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import GradientTest from './GradientTest'
+import { PromptEnhancerStream } from "@/components/agents/prompt-enhancer/PromptEnhancerStream";
+
 export function LandingPage() {
   const [currentView, setCurrentView] = useState('home')
+  const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null)
+
   const { isAuthenticated, isLoading, logout, user } = useAuth0()
 
-
-
-
+  const handleAgentLaunch = (agentId: number) => {
+    console.log(`Launching agent with ID: ${agentId}`)
+    setSelectedAgentId(agentId)
+    setCurrentView('agent')
+  }
+  useEffect(() => {
+    console.log("currentView updated to:", currentView);
+  }, [currentView]);
   const renderView = () => {
+    console.log("currentView", currentView)
     switch(currentView) {
+    
       case 'pricing':
         return <Pricing />
       case 'agent':
-        return <AgentGrid />
+        if (selectedAgentId === 3) { // Assuming 3 is the ID for the Prompt Engineer
+          return <PromptEnhancerStream />
+        }
+        // Add more cases for other agents as needed
+        return <AgentGrid onAgentLaunch={handleAgentLaunch} />
+
       default:
         return (
           <>
@@ -51,23 +67,7 @@ export function LandingPage() {
             <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-800">
               <div className="container px-4 md:px-6">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">Our AI Agents</h2>
-                <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
-                  <div className="flex flex-col items-center space-y-3 p-6 bg-gray-900 rounded-lg border border-gray-700 transition-transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20">
-                    <Code className="h-12 w-12 text-blue-400" />
-                    <h3 className="text-xl font-bold text-blue-400">CodeCrafter</h3>
-                    <p className="text-center text-gray-400">Expert in generating and refactoring code across multiple languages.</p>
-                  </div>
-                  <div className="flex flex-col items-center space-y-3 p-6 bg-gray-900 rounded-lg border border-gray-700 transition-transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20">
-                    <PenTool className="h-12 w-12 text-purple-400" />
-                    <h3 className="text-xl font-bold text-purple-400">DesignDiva</h3>
-                    <p className="text-center text-gray-400">Creates stunning visual designs and UI/UX concepts.</p>
-                  </div>
-                  <div className="flex flex-col items-center space-y-3 p-6 bg-gray-900 rounded-lg border border-gray-700 transition-transform hover:scale-105 hover:shadow-lg hover:shadow-pink-500/20">
-                    <Zap className="h-12 w-12 text-pink-400" />
-                    <h3 className="text-xl font-bold text-pink-400">DataWizard</h3>
-                    <p className="text-center text-gray-400">Analyzes complex datasets and provides actionable insights.</p>
-                  </div>
-                </div>
+                <AgentGrid onAgentLaunch={handleAgentLaunch} />
               </div>
             </section>
             <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-900">

@@ -62,14 +62,18 @@ const statusLabels = {
   "coming-soon": "On Its Way",
 }
 
-export function AgentGrid() {
+interface AgentGridProps {
+  onAgentLaunch: (agentId: number) => void;
+}
+
+export function AgentGrid({ onAgentLaunch }: AgentGridProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [isTagPaneOpen, setIsTagPaneOpen] = useState(true)
   const [expandedAgentId, setExpandedAgentId] = useState<number | null>(null);
 
-const [showModal, setShowModal] = useState(false);
-const [selectedAgent, setSelectedAgent] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<any>(null);
 
   const filteredAgents = agents.filter(agent => 
     (agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -86,8 +90,7 @@ const [selectedAgent, setSelectedAgent] = useState<any>(null);
 
   const launchAgent = (agentId: number) => {
     console.log(`Launching agent with ID: ${agentId}`)
-    
-    // Here you would typically launch the agent or navigate to its page
+    onAgentLaunch(agentId)
   }
  
   return (

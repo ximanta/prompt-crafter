@@ -64,14 +64,12 @@ export function PromptEnhancerStream() {
   }
 
   return (
-    <div className="w-[95.6vw] min-h-screen bg-blue-500" >
- 
-
-       <div className="container px-4 md:px-6 lg:px-12 items-center justify-center flex flex-col" >
-        <h1 className="text-3xl font-bold mb-2 flex items-center justify-center pt-10">
-          <WandIcon className="mr-2" /> Prompt Crafter
+    <div className="w-[95.6vw] min-h-screen " >
+        <div className="container px-4 md:px-6 lg:px-12 items-center justify-center flex flex-col" >
+        <h1 className="text-3xl font-bold mb-2 flex items-center justify-center pt-10 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+          <WandIcon className="mr-2" /> I'm Prompt Genie - Your Prompt Engineer
         </h1>
-        <p className="ai-generated-font">What are you generating today?</p>
+        <p className="mx-auto max-w-[700px] text-gray-400 md:text-xl">What are you generating today?</p>
       </div>
       <div className="grid lg:grid-cols-12">
       <div className="lg:col-span-5  ml-6" >
