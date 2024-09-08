@@ -40,12 +40,6 @@ export function PromptEnhancerStream() {
     setAssistantResponse("")
   }
 
-  // Remove this useEffect hook
-  // useEffect(() => {
-  //   if (assistantResponse.length > 0) {
-  //     setShowAssistantCard(true)
-  //   }
-  // }, [assistantResponse])
 
   const handleSubmitEnhancedPromptWrapper = () => {
     setShowAssistantCard(true)
@@ -67,7 +61,7 @@ export function PromptEnhancerStream() {
     <div className="w-[95.6vw] min-h-screen " >
         <div className="container px-4 md:px-6 lg:px-12 items-center justify-center flex flex-col" >
         <h1 className="text-3xl font-bold mb-2 flex items-center justify-center pt-10 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
-          <WandIcon className="mr-2" /> I'm Prompt Genie - Your Prompt Engineer
+          <WandIcon className="mr-2" /> Prompt Genie - Your Prompt Engineer
         </h1>
         <p className="mx-auto max-w-[700px] text-gray-400 md:text-xl">What are you generating today?</p>
       </div>

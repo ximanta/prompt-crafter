@@ -69,11 +69,13 @@ interface AgentGridProps {
 export function AgentGrid({ onAgentLaunch }: AgentGridProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [isTagPaneOpen, setIsTagPaneOpen] = useState(true)
+  const [isTagPaneOpen, setIsTagPaneOpen] = useState(false)
   const [expandedAgentId, setExpandedAgentId] = useState<number | null>(null);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<any>(null);
+
+
 
   const filteredAgents = agents.filter(agent => 
     (agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
