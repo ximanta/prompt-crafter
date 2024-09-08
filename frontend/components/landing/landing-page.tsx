@@ -10,7 +10,7 @@ import LoginButton from "./LoginButton"
 import Profile from "@/components/common/user_profile"
 import { useAuth0 } from "@auth0/auth0-react"
 import LogoutButton from "./LogoutButton"
-import { PromptEnhancerStream } from '../agents/prompt-enhancer/PromptEnhancerStream'
+import { AgentGrid } from "@/components/agents/prompt-enhancer/AgentGrid";
 import { Header } from "@/components/common/Header"
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import GradientTest from './GradientTest'
@@ -26,7 +26,7 @@ export function LandingPage() {
       case 'pricing':
         return <Pricing />
       case 'agent':
-        return <PromptEnhancerStream />
+        return <AgentGrid />
       default:
         return (
           <>
