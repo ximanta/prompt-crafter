@@ -81,7 +81,7 @@ export function EnhancedPromptCard({
             )}
           </ScrollArea>
         </CardContent>
-        <CardFooter className="justify-end ">
+        <CardFooter className="justify-end p-2">
           <TopTooltip title={isCopied ? "Copied!" : "Copy"}>
             <Button 
               size="icon" 

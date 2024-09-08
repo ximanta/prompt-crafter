@@ -93,6 +93,8 @@ export function PromptEnhancerStream() {
         </div>     
       
       </div>
+      <div className="grid lg:grid-cols-12">
+      <div className="lg:col-span-12  ml-6 mr-6" >
       {showAssistantCard && (
         <AssistantResponseCard
           assistantResponse={assistantResponse}
@@ -106,6 +108,8 @@ export function PromptEnhancerStream() {
           isVisible={showAssistantCard} // Add this prop
         />
       )}
+      </div>
+      </div>
       <ScrollToBottomButton /> 
    
      </div>

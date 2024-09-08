@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { Button } from "@/components/agents/prompt-enhancer/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/agents/prompt-enhancer/ui/card";
@@ -19,24 +19,41 @@ export function UserPromptCard({
   setUserPrompt,
   handleStreamSubmit,
   isLoading,
-  handleReset,
+ 
   resetView,
 }: UserPromptCardProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null); // Reference for the textarea
-  const [isFocused, setIsFocused] = useState(false); // Track focus state
+  
+  const [isLoadFocused, setIsLoadFocused] = useState(true); // Track load focus
+  const [isUserFocused, setIsUserFocused] = useState(false); // Track user focus
 
+  // Focus the textarea on load for cursor blinking without showing the border
   useEffect(() => {
     if (textAreaRef.current) {
       textAreaRef.current.focus(); // Automatically focus the textarea on load
     }
+    // Set timeout to remove the load focus after a small delay, allowing the user to interact
+    const timer = setTimeout(() => setIsLoadFocused(false), 1000); // 1-second timeout
+
+    return () => clearTimeout(timer); // Clean up timer on unmount
   }, []); // Empty dependency array to run only on mount
 
   const handleFocus = () => {
-    setIsFocused(true); // Mark that the user has clicked inside
+    if (!isLoadFocused) { // Only set user focus after load focus is done
+      setIsUserFocused(true); // Mark that the user has clicked inside
+    }
   };
-
+  const handleReset = () => {
+    setUserPrompt(''); // Clear the prompt content
+    setIsLoadFocused(true); // Re-enable load focus behavior
+    setIsUserFocused(false); // Reset user focus
+    if (textAreaRef.current) {
+      textAreaRef.current.focus(); // Focus the textarea to start cursor blinking
+    }
+    resetView(); // Call the resetView prop for parent handling
+  };
   const handleBlur = () => {
-    setIsFocused(false); // Update focus state when the textarea loses focus
+    setIsUserFocused(false); // Update focus state when the textarea loses focus
   };
 
   return (
@@ -44,10 +61,10 @@ export function UserPromptCard({
       <Card className="bg-gray-800 border-gray-700 flex flex-col" style={{ height: "250px" }}>
         <CardContent>
           <textarea
-            ref={textAreaRef} // Attach the ref here
+            ref={textAreaRef}
             value={userPrompt}
-            onFocus={handleFocus} // Trigger when the user clicks inside the textarea
-            onBlur={handleBlur} // Update focus state when the textarea loses focus
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             onChange={(e) => setUserPrompt(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -55,15 +72,16 @@ export function UserPromptCard({
                 handleStreamSubmit();
               }
             }}
-            placeholder="Type your prompt here..." // Show placeholder initially until clicked or text entered
+            placeholder="Type your prompt here..."
             style={{
               width: "100%",
               height: "175px",
               overflowY: "auto",
               outline: "none", // Remove outline on focus
-              border: "1px solid gray", // Remove the blue border
+              paddingTop: "1rem",
+              border: isUserFocused ? "1px solid gray" : "none", // No border on load, gray when user clicks
             }}
-            className={`mx-auto max-w-[700px] text-gray-400 bg-gray-800 border-gray-600 pt-4 ${
+            className={`mx-auto max-w-[700px] text-gray-400 bg-gray-800 ${
               isLoading ? "cursor-not-allowed" : ""
             }`}
             disabled={isLoading}

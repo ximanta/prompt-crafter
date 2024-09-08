@@ -63,8 +63,8 @@ export function AssistantResponseCard({
     }
 
     return (
-      <div className="w-full px-4 flex ">
-         <Card className="flex flex-col relative w-full" style={{ minHeight: '300px' }}>
+      <div className="bg-gray-900 p-6 space-y-6">
+         <Card className="flex flex-col relative w-full  bg-gray-700" style={{ minHeight: '300px' }}>
 
           <div className="absolute top-2 right-2 flex space-x-2">
             <TopTooltip title="Stop">
@@ -105,11 +105,11 @@ export function AssistantResponseCard({
               </span>
             </TopTooltip>
           </div>
-          <CardContent className="flex-grow overflow-hidden pt-8">
+          <CardContent className="flex-grow overflow-hidden pt-8 ">
             <ScrollArea className="pt-4">
               {assistantResponse ? (
                 <ReactMarkdown 
-                  className="prose markdown-content ai-generated-font"
+                  className="prose markdown-content text-gray-300"
                   remarkPlugins={[remarkGfm]}
                 >
                   {assistantResponse}
