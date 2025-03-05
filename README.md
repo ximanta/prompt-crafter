@@ -27,8 +27,10 @@ Prompt Crafter is a web application that helps users enhance their prompts for l
 2. Create and activate conda environment:
    ```
   conda create --name prompt_crafter python=3.9.19
-  conda activate prompt_crafter
    ```
+```
+  conda activate prompt_crafter
+```
 3. Install backend dependencies:
    ```
    pip install -r requirements.txt
