@@ -5,7 +5,7 @@ Prompt Crafter is a web application that helps users enhance their prompts for l
 ## Project Structure
 
 - `backend/`: FastAPI backend
-- `prompt-crafter/`: Next.js frontend
+- `frontend/`: Next.js frontend
 
 ## Prerequisites
 
@@ -26,11 +26,9 @@ Prompt Crafter is a web application that helps users enhance their prompts for l
 
 2. Create and activate conda environment:
    ```
-  conda create --name prompt_crafter python=3.9.19
+      conda create --name prompt_crafter python=3.10
+      conda activate prompt_crafter
    ```
-```
-  conda activate prompt_crafter
-```
 3. Install backend dependencies:
    ```
    pip install -r requirements.txt
@@ -57,10 +55,12 @@ The backend will be available at `http://localhost:8000`.
    ```
    cd frontend
    ```
-Create a .env file with the below entry:
+2. Create a .env file with the below entry:
 
-NEXT_PUBLIC_API_URL=http://localhost:8000
-2. Install dependencies:
+   ```
+   NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+   ```
+3. Install dependencies:
    ```
    npm install
    ```
@@ -69,7 +69,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
    yarn install
    ```
 
-3. Run the development server:
+4. Run the development server:
    ```
    npm run dev
    ```
@@ -84,7 +84,7 @@ The frontend will be available at `http://localhost:3000`.
 
 1. Open your browser and go to `http://localhost:3000`.
 2. Enter a prompt in the left panel.
-3. Click the "Enhance" button to generate enhanced prompts.
+3. Click the **Enhance** button to generate enhanced prompts.
 4. View the enhanced prompts in the middle panel.
 5. Send an enhanced prompt to the assistant in the right panel to see a simulated response.
 

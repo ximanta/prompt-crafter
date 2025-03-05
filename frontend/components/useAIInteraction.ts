@@ -32,7 +32,7 @@ export function useAIInteraction() {
     try {
       console.log("API URL:", apiUrl);  // Debugging step
 
-      const response = await fetch(`${apiUrl}/enhance_prompt_stream`, {
+      const response = await fetch(`${apiUrl}/enhance_prompt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: userPrompt }),

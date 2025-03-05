@@ -4,11 +4,10 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
-from langchain_core.messages import HumanMessage
-from fastapi import FastAPI, WebSocket, HTTPException
-from fastapi.responses import StreamingResponse
-import asyncio
+from fastapi import FastAPI, HTTPException
 import logging
+import json
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -68,75 +67,10 @@ The prompt is {user_prompt}
 """
 
 
-import json
-from fastapi.responses import StreamingResponse
-async def enhance_prompt_stream(user_prompt: str):
-    try:
-        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", google_api_key=GEMINI_API_KEY, streaming=True)
 
-        prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-        messages = prompt.format_messages(user_prompt=user_prompt)
-        messages_dicts = [{"role": "user", "content": m.content} for m in messages]
-
-        async for chunk in llm.astream(messages_dicts):
-            # Clean the chunk to avoid double-wrapped JSON
-            cleaned_content = chunk.content.strip()
-            
-            # Handle responses wrapped in backticks
-            if cleaned_content.startswith("```") and cleaned_content.endswith("```"):
-                cleaned_content = cleaned_content[3:-3].strip()
-
-            # Try to parse the cleaned content as JSON
-            try:
-                json_response = json.loads(cleaned_content)
-                # Yield just the enhanced prompt field
-                yield json_response.get("enhanced_prompt", cleaned_content)
-            except json.JSONDecodeError:
-                # If JSON parsing fails, extract the enhanced prompt using regex
-                match = re.search(r'"enhanced_prompt"\s*:\s*"(.+?)"', cleaned_content, re.DOTALL)
-                if match:
-                    enhanced_prompt = match.group(1).replace('\\n', '\n').strip()
-                    yield enhanced_prompt
-                else:
-                    # If extraction fails, yield raw content
-                    yield cleaned_content
-
-        # Send a final message to indicate the end of the stream
-        yield "[DONE]"
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error in streaming: {str(e)}")
-
-@app.websocket("/ws/enhance_prompt")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        try:
-            user_prompt = await websocket.receive_text()
-            async for chunk in enhance_prompt_stream(user_prompt):
-                await websocket.send_text(chunk)
-            await websocket.send_text("[DONE]")
-        except WebSocketDisconnect:
-            print("Client disconnected")
-            break
-
-
-async def answer(user_prompt: str):
-    try:
-        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GEMINI_API_KEY, streaming=True)
-        
-        async for chunk in llm.astream([{"role": "user", "content": user_prompt}]):
-            # Log the response chunk
-            logger.info(f"Gemini response chunk: {chunk.content}")
-            yield chunk.content
-        
-        # Send a final message to indicate the end of the stream
-        yield "[DONE]"
-    except Exception as e:
-        logger.error(f"Error in streaming: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error in streaming: {str(e)}")
 
 def enhance_prompt(user_prompt: str) -> dict:
-    llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GEMINI_API_KEY)
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", google_api_key=GEMINI_API_KEY)
 
     prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     messages = prompt.format_messages(user_prompt=user_prompt)
@@ -164,3 +98,19 @@ def enhance_prompt(user_prompt: str) -> dict:
         else:
             # If extraction fails, return the raw content
             return {"error": "Failed to parse response", "raw_content": cleaned_content}
+
+async def answer(user_prompt: str):
+    try:
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", google_api_key=GEMINI_API_KEY, streaming=True)
+        
+        async for chunk in llm.astream([{"role": "user", "content": user_prompt}]):
+            # Log the response chunk
+            logger.info(f"Gemini response chunk: {chunk.content}")
+            yield chunk.content
+        
+        # Send a final message to indicate the end of the stream
+        yield "[DONE]"
+    except Exception as e:
+        logger.error(f"Error in streaming: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error in streaming: {str(e)}")
+
