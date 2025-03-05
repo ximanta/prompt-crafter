@@ -71,7 +71,6 @@ The prompt is {user_prompt}
 
 def enhance_prompt(user_prompt: str) -> dict:
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", google_api_key=GEMINI_API_KEY)
-
     prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     messages = prompt.format_messages(user_prompt=user_prompt)
     messages_dicts = [{"role": "user", "content": m.content} for m in messages]
