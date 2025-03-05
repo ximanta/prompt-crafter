@@ -72,7 +72,7 @@ import json
 from fastapi.responses import StreamingResponse
 async def enhance_prompt_stream(user_prompt: str):
     try:
-        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GEMINI_API_KEY, streaming=True)
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", google_api_key=GEMINI_API_KEY, streaming=True)
 
         prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
         messages = prompt.format_messages(user_prompt=user_prompt)

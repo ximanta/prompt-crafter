@@ -64,7 +64,9 @@ The backend will be available at `http://localhost:8000`.
    ```
    cd frontend
    ```
+Create a .env file with the below entry:
 
+NEXT_PUBLIC_API_URL=http://localhost:8000
 2. Install dependencies:
    ```
    npm install
