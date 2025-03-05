@@ -9,6 +9,7 @@ Prompt Crafter is a web application that helps users enhance their prompts for l
 
 ## Prerequisites
 
+- Anaconda
 - Python 3.8+
 - Node.js 14+
 - npm or yarn
@@ -23,27 +24,17 @@ Prompt Crafter is a web application that helps users enhance their prompts for l
    cd backend
    ```
 
-2. Create a virtual environment:
+2. Create and activate conda environment:
    ```
-   python -m venv venv
+  conda create --name prompt_crafter python=3.9.19
+  conda activate prompt_crafter
    ```
-
-3. Activate the virtual environment:
-   - On Windows:
-     ```
-     venv\Scripts\activate
-     ```
-   - On macOS and Linux:
-     ```
-     source venv/bin/activate
-     ```
-
-4. Install dependencies:
+3. Install backend dependencies:
    ```
    pip install -r requirements.txt
    ```
 
-5. Set up your Gemini API key:
+4. Set up your Gemini API key:
    - Create a file named `.env` in the `backend` directory
    - Add your Gemini API key to the `.env` file:
      ```
